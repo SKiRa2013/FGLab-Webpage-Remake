@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
     ports:
-      - "5432:5432"
+      - "5432:${DATABASE_PORT}"
     volumes:
       - ./fglab-db/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
     healthcheck:
@@ -31,7 +31,18 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_HOST: db
-      DATABASE_PORT: 5432
+      DATABASE_PORT: ${DATABASE_PORT}
     depends_on:
       db:
         condition: service_healthy  # Espera a que Postgres esté 100% listo para responder consultas
+    
+  # Servicio 3: Frontend en Vite + React
+  frontend:
+      build:
+        context: ./fastapi-frontend
+        dockerfile: Dockerfile
+      container_name: fastapi_react 
+      ports:
+        - "5173:80"
+      depends_on:
+        - api

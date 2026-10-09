@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Depends, status
 
 from sqlalchemy import text
+from sqlalchemy.engine import Connection
 from sqlalchemy.exc import DBAPIError
 
-from config.db import conn
+from config.db import get_db
 from models.labmem import PostLabMem, UpdateLabMem
 
 ###############################################################################################################################
@@ -11,9 +12,9 @@ from models.labmem import PostLabMem, UpdateLabMem
 labmem = APIRouter()
 
 @labmem.post('/labmem/')
-def create_labmem(labmem: PostLabMem):
+def create_labmem(labmem: PostLabMem, db: Connection = Depends(get_db)):
     query = text("SELECT COUNT(*) FROM labmem")
-    labmem_length = conn.execute(query).mappings().fetchone()['count']
+    labmem_length = db.execute(query).mappings().fetchone()['count']
 
     query_2 = text("""
         SELECT * FROM insert_labmem(
@@ -28,7 +29,7 @@ def create_labmem(labmem: PostLabMem):
     """)
     
     try:
-        result = conn.execute(query_2, {
+        result = db.execute(query_2, {
             'idx': labmem_length + 1,
             'name': labmem.name,
             'alias': labmem.alias,
@@ -38,7 +39,7 @@ def create_labmem(labmem: PostLabMem):
             'img': labmem.img
         }).mappings().fetchall()
 
-        conn.commit()
+        db.commit()
         return result
     except DBAPIError as dbe:
         POSTGRES_ERROR_MSG = str(dbe.orig)
@@ -46,7 +47,7 @@ def create_labmem(labmem: PostLabMem):
     
 
 @labmem.post('/labmem/{labmem_idx}/')
-def create_labmem_at_index(labmem_idx: int, labmem: PostLabMem):
+def create_labmem_at_index(labmem_idx: int, labmem: PostLabMem, db: Connection = Depends(get_db)):
     query = text("""
         SELECT * FROM insert_labmem(
             CAST(:idx AS INTEGER),
@@ -60,7 +61,7 @@ def create_labmem_at_index(labmem_idx: int, labmem: PostLabMem):
     """)
 
     try:
-        result = conn.execute(query, {
+        result = db.execute(query, {
             'idx': labmem_idx,
             'name': labmem.name,
             'alias': labmem.alias,
@@ -70,7 +71,7 @@ def create_labmem_at_index(labmem_idx: int, labmem: PostLabMem):
             'img': labmem.img
         }).mappings().fetchall()
 
-        conn.commit()
+        db.commit()
         return result
     except DBAPIError as dbe:
         POSTGRES_ERROR_MSG = str(dbe.orig)
@@ -83,28 +84,24 @@ def get_root():
     return {'welcome': "WELCOME TO FUTURE GADGET FASTAPI API REST"} 
 
 @labmem.get('/labmem/')
-def get_labmem():
+def get_labmem(db: Connection = Depends(get_db)):
     query = text("SELECT code, name, alias, age, dob, description, img FROM labmem ORDER BY code")
-
-    with conn.begin():
-        return conn.execute(query).mappings().fetchall() 
+    return db.execute(query).mappings().fetchall() 
 
 @labmem.get('/labmem/{labmem_idx}/')
-def get_labmem_from_index(labmem_idx: int):
+def get_labmem_from_index(labmem_idx: int, db: Connection = Depends(get_db)):
     query = text("SELECT code, name, alias, age, dob, description, img FROM labmem WHERE code = :idx ORDER BY code")
+    result = db.execute(query, {'idx': labmem_idx}).mappings().fetchall()
 
-    with conn.begin():
-        result = conn.execute(query, {'idx': labmem_idx}).mappings().fetchall()
+    if len(result) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LAB MEM NOT FOUND")
 
-        if len(result) == 0:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LAB MEM NOT FOUND")
-
-        return result
+    return result
 
 #############################################################################
 
 @labmem.put('/labmem/{labmem_idx}/')
-def update_labmem_in_index(labmem_idx: int, labmem: UpdateLabMem):
+def update_labmem_in_index(labmem_idx: int, labmem: UpdateLabMem, db: Connection = Depends(get_db)):
     raw_data = {
         'name': labmem.name,
         'alias': labmem.alias,
@@ -124,22 +121,20 @@ def update_labmem_in_index(labmem_idx: int, labmem: UpdateLabMem):
 
     update_data.update({'idx': labmem_idx})
 
-    with conn.begin():
-        conn.execute(query, update_data)
+    
+    db.execute(query, update_data)
 
-        update_data.update({'status': "updated"})
-        return update_data
+    update_data.update({'status': "updated"})
+    return update_data
 
 #############################################################################
 
 @labmem.delete('/labmem/{labmem_idx}/')
-def delete_labmem_in_index(labmem_idx: int):
+def delete_labmem_in_index(labmem_idx: int, db: Connection = Depends(get_db)):
     query = text("SELECT * FROM delete_labmem(:idx)")
+    result = db.execute(query, {'idx': labmem_idx}).mappings().fetchall()
 
-    with conn.begin():
-        result = conn.execute(query, {'idx': labmem_idx}).mappings().fetchall()
+    if len(result) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LAB MEM NOT FOUND")
 
-        if len(result) == 0:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LAB MEM NOT FOUND")
-
-        return result
+    return result
