@@ -2,7 +2,7 @@ services:
   # Servicio 1: Base de datos PostgreSQL
   db:
     image: postgres:17-alpine
-    container_name: postgres_labmem
+    container_name: fglab_postgres
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -22,7 +22,7 @@ services:
     build:
       context: ./fastapi-crud
       dockerfile: Dockerfile
-    container_name: fastapi_fglab
+    container_name: fglab_fastapi
     restart: always
     ports:
       - "8000:8000"
@@ -36,13 +36,31 @@ services:
       db:
         condition: service_healthy  # Espera a que Postgres esté 100% listo para responder consultas
     
-  # Servicio 3: Frontend en Vite + React
+  # Servicio 3: Frontend en Vite + React compilado en NGINX (Producción)
   frontend:
+      profiles: ["prod"]
       build:
         context: ./fastapi-frontend
         dockerfile: Dockerfile
-      container_name: fastapi_react 
+      container_name: fglab_frontend 
       ports:
         - "5173:80"
       depends_on:
         - api
+
+  # Servicio 3: Frontend en Vite + React (Development)
+  frontend-dev:
+    profiles: ["dev"]
+    build:
+      context: ./fastapi-frontend
+      dockerfile: Dockerfile.dev
+    container_name: fglab_frontend_dev
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./fastapi-frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api

@@ -1,32 +1,43 @@
-import './App.css'
+import { lazy, Suspense } from 'react';
+import './App.css';
 
-import { useState } from 'react'
+import { Link } from './routes/Link.jsx';
+import { Router } from './routes/Router.jsx';
+import { Route } from './routes/Route.jsx';
 
-import Button from "./components/Button"
-import Labmem from "./components/Labmem"
+const CounterPage = lazy(() => import('./components/Counter/Counter.jsx'));
+const LabmemPage = lazy(() => import('./components/Labmem/Labmem.jsx'));
+import Button from './components/Counter/Button.jsx';
+
+const appRoutes = [
+	{
+		path: '/labmem/:code',
+		Component: ({ routeParams }) => <h1>Code: {routeParams.code}</h1>,
+	},
+];
+
+
+function Main() {
+	return (
+		<div className="m-12 p-4">
+			<Link to='/counter'> <Button text={"Counter Page"} color={'green'} func={()=>{}} /> </Link>
+			<Link to='/labmem'> <Button text={"Labmem Page"} color={'green'} func={()=>{}} /> </Link>
+		</div>
+	);
+};
 
 function App() {
-  const [counter, setCounter] = useState(7);
-
-  const incrementCounter = () => setCounter(counter + 1);
-  const decrementCounter = () => setCounter(counter - 1);
-
-  return (
-    <div className="m-12 p-4">
-
-      <h1 className="text-7xl bg-amber-400 rounded-2xl text-white mb-10">Hola mundo</h1>
-      
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-white mb-5">Contador: {counter}</h1>
-        
-        <Button text={'Incrementar'} func={ incrementCounter } color={'blue'}/>
-        <Button text={'Decrementar'} func={ decrementCounter } color={'red'} />
-      </div>
-      
-      <Labmem />
-
-    </div>
-  )
-}
+    return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<main>
+				<Router routes={appRoutes}>
+					<Route path='/' Component={Main} />
+					<Route path='/counter' Component={CounterPage} />
+					<Route path='/labmem' Component={LabmemPage} />
+				</Router>
+			</main>
+		</Suspense>
+    );
+};
 
 export default App

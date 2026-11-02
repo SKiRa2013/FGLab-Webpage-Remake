@@ -1,10 +1,9 @@
-import React from "react";
-import { COLOR_MAP } from "../constants/colors";
+import { COLOR_MAP } from "../../constants/colors";
 
 export default function LabmemInfo({labmem}) {
     if(!labmem) {
         return <h1 className="text-white">Cargando labmems...</h1>
-    }
+    };
 
     return (
         <div className={`rounded-lg p-4 text-white w-100 ${COLOR_MAP.labmem}`}>
@@ -17,7 +16,7 @@ export default function LabmemInfo({labmem}) {
                     {labmem.name}
                 </h2>
 
-                <p className="text-white">ID: {labmem.code}</p>
+                <p className="text-white">LAB MEM {String(labmem.code).padStart(3, '0')}</p>
             </div>
         </div>
     );
