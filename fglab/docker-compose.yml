@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:${DATABASE_PORT}"
     volumes:
-      - ./fglab-db/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
+      - ./postgres/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
       interval: 5s
@@ -39,7 +39,7 @@ services:
   # Servicio 3: Frontend en Vite + React
   frontend:
       build:
-        context: ./fastapi-frontend
+        context: ./react
         dockerfile: Dockerfile
       container_name: fastapi_react 
       ports:
