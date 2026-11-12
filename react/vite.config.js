@@ -8,4 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    watch: {
+      usePolling: true,   // Clave para detectar cambios dentro de volúmenes Docker
+      interval: 100,      // Intervalo de comprobación en ms
+    },
+    hmr: {
+      clientPort: 5173,   // Puerto al que el navegador conecta el WebSocket de HMR
+    },
+  },
 })

@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 6. Copiar el código fuente de la API
 COPY . .
 
-# 7. Exponer el puerto de FastAPI
+# 7. Exponer el puerto de FastAPI (documentación - se expone realmente en el compose)
 EXPOSE 8000
 
 # 8. Comando para iniciar la aplicación con Uvicorn

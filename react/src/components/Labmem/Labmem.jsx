@@ -1,8 +1,9 @@
-import React from "react";
-
 import { useEffect, useState } from 'react';
-import LabmemInfo from "./LabmemInfo";
 
+import { Link } from "../../routes/Link.jsx";
+
+import LabmemInfo from "./LabmemInfo.jsx";
+import Button from "../Counter/Button.jsx";
 
 export default function Labmem(){
 
@@ -51,13 +52,21 @@ export default function Labmem(){
 
     const sortedLabmems = uniqueLabmems.sort((a, b) => a.code - b.code);
 
-    return (   
-        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {
-                sortedLabmems.map((labmem, index) => (
-                    <LabmemInfo className="m-5" key={index} labmem={labmem}/>
-                ))
-            }
-        </div>
+    return (  
+        <div className="m-3 p-1">
+            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {
+                    sortedLabmems.length <= 0 ? 
+                        <h1 className="text-white">Cargando labmems...</h1>
+                    :
+                        sortedLabmems.map((labmem, index) => (
+                            <LabmemInfo className="m-5" key={index} labmem={labmem}/>
+                        ))
+                }
+            </div>
+            <div className="mt-10">
+                <Link to='/'> <Button text={"Volver al inicio"} color={'green'} func={()=>{}} /> </Link>
+            </div>
+        </div> 
     );
 };
