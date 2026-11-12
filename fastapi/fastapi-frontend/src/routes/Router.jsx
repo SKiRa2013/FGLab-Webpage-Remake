@@ -3,6 +3,7 @@ import { match } from 'path-to-regexp';
 
 import { EVENTS } from '../constants/events.jsx';
 
+import { Route } from './Route.jsx';
 import Page404 from './404.jsx';
 
 export function Router({ children, routes = [], defaultComponent: DefaultComponent = () => <Page404 /> }) {
@@ -26,9 +27,7 @@ export function Router({ children, routes = [], defaultComponent: DefaultCompone
 
     // Add routes from children <Route /> components
     const routesFromChildren = Children.map(children, ({props, type}) => {
-        const { name } = type;
-
-        const isRoute = name === 'Route';
+        const isRoute = type === Route || type?.isRoute;
 
         if (!isRoute) return null;
         return props;

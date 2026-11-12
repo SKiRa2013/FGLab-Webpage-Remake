@@ -53,10 +53,10 @@ export default function Labmem(){
     const sortedLabmems = uniqueLabmems.sort((a, b) => a.code - b.code);
 
     return (  
-        <div className="m-12 p-4">
+        <div className="m-3 p-1">
             <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {
-                    sortedLabmems.count <= 0 ? 
+                    sortedLabmems.length <= 0 ? 
                         <h1 className="text-white">Cargando labmems...</h1>
                     :
                         sortedLabmems.map((labmem, index) => (
