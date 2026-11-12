@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:${DATABASE_PORT}"
     volumes:
-      - ./fglab-db/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
+      - ./postgres/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
       interval: 5s
@@ -35,7 +35,7 @@ services:
     depends_on:
       db:
         condition: service_healthy  # Espera a que Postgres esté 100% listo para responder consultas
-    
+
   # Servicio 3: Frontend en Vite + React compilado en NGINX (Producción)
   frontend:
       profiles: ["prod"]
@@ -43,10 +43,6 @@ services:
         context: ./fastapi-frontend
         dockerfile: Dockerfile
       container_name: fglab_frontend 
-      ports:
-        - "5173:80"
-      depends_on:
-        - api
 
   # Servicio 3: Frontend en Vite + React (Development)
   frontend-dev:
