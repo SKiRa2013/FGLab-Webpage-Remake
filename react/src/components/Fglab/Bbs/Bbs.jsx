@@ -7,11 +7,15 @@ import { DateConversion } from '../../DateConversion.jsx';
 
 export default function Bbs() {
 	const [posts, setPosts] = useState([]);
-	const BASE_URL = 'http://localhost:8000/bbs/posts';
+	const BASE_URL = `${import.meta.env.VITE_API_URL}/bbs/posts` || 'http://localhost:8000/bbs/posts';
 
 	const fetchPosts = async () => {
 		try{
-			const response = await fetch(`${BASE_URL}/`);
+			const response = await fetch(`${BASE_URL}/`, {
+				headers: {
+					'ngrok-skip-browser-warning': 'true',
+				},
+			});
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
@@ -56,7 +60,8 @@ export default function Bbs() {
 			const response = await fetch(`${BASE_URL}/`, {
 				method: "POST",
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+        			'ngrok-skip-browser-warning': 'true',
 				},
 
 				body: JSON.stringify(payload)

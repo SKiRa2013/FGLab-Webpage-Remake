@@ -7,7 +7,7 @@ export default function Toppu() {
     return (
         <article className="bg-haikei fglab-container flex flex-col min-h-full justify-between items-center text-center">
             <header className="flex flex-col items-center gap-2 mb-6">
-                <img src="/Data/taitoru.jpg" alt="titoru.jpg" className="max-w-full" />
+                <img src={`${import.meta.env.BASE_URL}/Data/taitoru.jpg`} alt="titoru.jpg" className="max-w-full" />
 
                 <p className="aa"><strong>HOMEPAGE</strong></p>
             </header>
@@ -51,7 +51,7 @@ export default function Toppu() {
             <footer className="flex flex-col items-center gap-2 mt-8 text-neutral-400 text-xs w-full">
                 <p>This HOMEPAGE is compatible with deloode chrome ver.2.0 and up.</p>
                 <p>Recommended resolution is 1600x1200 pixels.</p>
-                <img src="/Data/1f.jpg" alt="burankankoubou" className="mt-6" />
+                <img src={`${import.meta.env.BASE_URL}/Data/1f.jpg`} alt="burankankoubou" className="mt-6" />
 
                 <p className="mt-1">React version by S-KiRa, 2026.</p>
             </footer>

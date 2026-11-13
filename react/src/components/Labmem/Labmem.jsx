@@ -8,11 +8,15 @@ import Button from "../Counter/Button.jsx";
 export default function Labmem(){
 
     const [labmemData, setLabmemData] = useState([]);
-    const BASE_URL = 'http://localhost:8000/labmem/';
+    const BASE_URL = `${import.meta.env.VITE_API_URL}/labmem/` || 'http://localhost:8000/labmem/';
 
     const fetchLabmem = async (id) => {
         try{
-            const response = await fetch(`${BASE_URL}${id}/`);
+            const response = await fetch(`${BASE_URL}${id}/`, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                },
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
