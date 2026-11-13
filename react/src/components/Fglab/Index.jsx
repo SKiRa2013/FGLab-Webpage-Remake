@@ -10,7 +10,7 @@ export default function Index({ migi }) {
             </aside>
 
             {/* Panel Derecho (antiguo toppu.html / migi) */}
-            <main className="flex-1 min-h-0 min-w-0 overflow-y-auto p-6 bg-neutral-900 bg-haikei">
+            <main className="flex-1 min-h-0 min-w-0 overflow-y-auto bg-neutral-900">
                 { migi }
             </main>
         </div>

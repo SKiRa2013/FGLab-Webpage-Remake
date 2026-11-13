@@ -1,10 +1,11 @@
 import '../Fglab.css';
+import '../../../App.css';
 
 import Bakc from '../../../routes/Bakc.jsx';
 
 export default function Katudou() {
     return (
-        <div className="fglab-container" style={{ fontSize: "16px" }}>
+        <div className="bg-haikei fglab-container" style={{ fontSize: "16px" }}>
             <p className="mb-3">Chaotic Road</p>
             <p className="mb-3"><strong style={{fontSize: "36px" }}>Road of procure the chaotic</strong></p>
             <p className="mb-3">~We is not to be stopped- never. Not until grab in this palm~</p>

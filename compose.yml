@@ -11,6 +11,7 @@ services:
       - "5432:${DATABASE_PORT}"
     volumes:
       - ./postgres/backup_labmem.sql:/docker-entrypoint-initdb.d/backup_labmem.sql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
       interval: 5s
@@ -20,7 +21,7 @@ services:
   # Servicio 2: API de FastAPI
   api:
     build:
-      context: ./fastapi-crud
+      context: ./fastapi
       dockerfile: Dockerfile
     container_name: fglab_fastapi
     restart: always
@@ -40,7 +41,7 @@ services:
   frontend:
       profiles: ["prod"]
       build:
-        context: ./fastapi-frontend
+        context: ./react
         dockerfile: Dockerfile
       container_name: fglab_frontend 
 
@@ -48,7 +49,7 @@ services:
   frontend-dev:
     profiles: ["dev"]
     build:
-      context: ./fastapi-frontend
+      context: ./react
       dockerfile: Dockerfile.dev
     container_name: fglab_frontend_dev
     ports:
@@ -56,7 +57,10 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:
-      - ./fastapi-frontend:/app
+      - ./react:/app
       - /app/node_modules
     depends_on:
       - api
+
+volumes:
+  postgres_data:

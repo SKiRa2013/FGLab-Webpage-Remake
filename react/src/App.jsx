@@ -13,7 +13,10 @@ const LabmemPage = lazy(() => import('./components/Labmem/Labmem.jsx'));
 import Index from './components/Fglab/Index.jsx';
 import Toppu from './components/Fglab/Toppu.jsx';
 import Seika from './components/Fglab/Seika.jsx';
-import Bbs from './components/Fglab/Bbs.jsx';
+
+import Bbs from './components/Fglab/Bbs/Bbs.jsx';
+import Pass from './components/Fglab/Bbs/Pass.jsx';
+
 import Links from './components/Fglab/Links.jsx';
 
 import Labo from './components/Fglab/Labo/Labo.jsx';
@@ -43,7 +46,10 @@ function Sample() {
 
 const ToppuPage = withMigi(Toppu);
 const SeikaPage = withMigi(Seika);
+
 const BbsPage = withMigi(Bbs);
+const PassPage = withMigi(Pass);
+
 const LinksPage = withMigi(Links);
 
 const LaboPage = withMigi(Labo);
@@ -66,9 +72,13 @@ function App() {
 				<Router routes={appRoutes}>
 					<Route path='/' Component={ ToppuPage } />
 					<Route path='/seika' Component={ SeikaPage } />
-					<Route path='/bbs' Component={ BbsPage } />
-					<Route path='/links' Component={ LinksPage } />
 
+					<Route path='/bbs' Component={ BbsPage } />
+{/*
+					<Route path='/pass' Component={ PassPage } />
+					
+					<Route path='/links' Component={ LinksPage } />
+*/}
 					<Route path='/labo' Component={ LaboPage } />
 					<Route path='/katudou' Component={ KatudouPage } />
 					<Route path='/rabomen' Component={ RabomenPage } />

@@ -1,10 +1,11 @@
 import './Fglab.css';
+import '../../App.css';
 
 import { Link } from '../../routes/Link.jsx';
 
 export default function Toppu() {
     return (
-        <article className="fglab-container flex flex-col min-h-full justify-between items-center text-center">
+        <article className="bg-haikei fglab-container flex flex-col min-h-full justify-between items-center text-center">
             <header className="flex flex-col items-center gap-2 mb-6">
                 <img src="/Data/taitoru.jpg" alt="titoru.jpg" className="max-w-full" />
 

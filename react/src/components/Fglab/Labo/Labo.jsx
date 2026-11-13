@@ -6,7 +6,7 @@ import Bakc from '../../../routes/Bakc.jsx';
 
 export default function Labo() {
     return (
-        <div className="fglab-container" style={{ fontSize: '16px' }}>
+        <div className="bg-haikei fglab-container" style={{ fontSize: '16px' }}>
             <p className="mb-8"><strong style={{ fontSize: '36px' }}>About Lab</strong></p>
 
             <p className="mb-6">~Vanishment this world like nightmares is our objective us fugitives of eternity~</p>
