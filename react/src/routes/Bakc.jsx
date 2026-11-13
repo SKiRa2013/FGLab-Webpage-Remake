@@ -5,7 +5,9 @@ import { Link } from "../routes/Link.jsx";
 export default function Bakc({ previousRoute }) {
     return (
         <>
-            <Link to={previousRoute} className="anchor">bakc</Link>
+            <Link to={previousRoute} className="anchor" style={{ fontSize: "large" }}>
+                bakc
+            </Link>
         </>
     );
 }

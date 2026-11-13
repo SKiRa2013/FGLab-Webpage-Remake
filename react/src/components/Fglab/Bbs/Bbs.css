@@ -1,0 +1,32 @@
+.bbs-container {
+    background-color: #cc9;
+    font-size: x-small;
+    text-align: center;
+    color: #000;
+}
+
+.bbs-container table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+}
+
+.bbs-input {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+    padding: 2px 4px;
+    font-family: inherit;
+    font-size: small;
+}
+
+.bbs-input:focus {
+    outline: 1px solid #000000;
+    border-color: #0000ff;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+    background-color: #ffffff;
+}
+
+.df {
+    color: #00F;
+}

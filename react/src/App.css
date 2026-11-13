@@ -8,15 +8,53 @@
 }
 
 .bg-haikei {
-  background-image: url(/Data/haikei.jpg);
+  background-image: url(${import.meta.env.BASE_URL}/Data/haikei.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
-.anchor {
-  font-size: large;
-  color: #F00;
+.fake-anchor {
+  color: #EE0000;
   text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.anchor:link {
+  color: #EE0000;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.anchor:visited {
+  color: #8B1A55;
+}
+
+.anchor:active {
+  color: #0000FF;
+}
+
+.fake-classic-anchor {
+  color: #0000EE;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.classic-anchor:link {
+  color: #0000EE;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.classic-anchor:visited {
+  color: #551A8B;
+}
+
+.classic-anchor:active {
+  color: #FF0000;
 }

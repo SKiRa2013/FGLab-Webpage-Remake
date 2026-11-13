@@ -42,6 +42,8 @@ def create_labmem(labmem: PostLabMem, db: Connection = Depends(get_db)):
         db.commit()
         return result
     except DBAPIError as dbe:
+        db.rollback()
+        
         POSTGRES_ERROR_MSG = str(dbe.orig)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=POSTGRES_ERROR_MSG)
     
@@ -74,6 +76,8 @@ def create_labmem_at_index(labmem_idx: int, labmem: PostLabMem, db: Connection =
         db.commit()
         return result
     except DBAPIError as dbe:
+        db.rollback()
+        
         POSTGRES_ERROR_MSG = str(dbe.orig)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=POSTGRES_ERROR_MSG)    
 

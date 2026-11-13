@@ -1,4 +1,4 @@
-export default function Bbs() {
+export default function Pass() {
     return (
         <>
         

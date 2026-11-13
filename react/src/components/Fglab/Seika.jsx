@@ -1,4 +1,5 @@
 import './Fglab.css';
+import '../../App.css';
 
 import Bakc from '../../routes/Bakc.jsx';
 

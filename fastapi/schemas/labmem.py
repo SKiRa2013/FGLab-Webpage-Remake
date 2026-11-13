@@ -11,5 +11,3 @@ labmem_table = Table("labmem", meta,
                Column("dob", DATE, nullable=False, default="1955-11-05"),
                Column("description", TEXT, nullable=False, default="")
 )
-
-meta.create_all(engine)
