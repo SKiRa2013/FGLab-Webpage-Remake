@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, ForeignKey
+from sqlalchemy import Table, Column, ForeignKey, func
 from sqlalchemy.sql.sqltypes import INTEGER, VARCHAR, TIMESTAMP
 from config.db import meta, engine
 
@@ -8,5 +8,5 @@ bbs_posts_table = Table("bbs_posts", meta,
     Column("subject", VARCHAR(30), nullable=False, default=""),
     Column("message", VARCHAR(200), nullable=False, default=""),
     Column("url", VARCHAR(30), nullable=True, default=""),
-    Column("created_at", TIMESTAMP, nullable=False, default="1970-01-01 00:00:00"),
+    Column("created_at", TIMESTAMP(timezone=True), nullable=False, server_default=func.now()),
 )
