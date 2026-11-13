@@ -1,0 +1,2 @@
+#!/bin/sh
+kubectl run -i --tty --rm load-generator --namespace=fglab --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://fastapi-service:8000/bbs/posts/ > /dev/null; done"
