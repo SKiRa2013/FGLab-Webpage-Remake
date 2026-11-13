@@ -16,7 +16,7 @@ This is just a temporary README.MD, I intend to update this to look way better.
 
 Este proyecto está compuesto por:
 - **Frontend (`react/`):** Aplicación SPA construida con React, Vite y Tailwind CSS, desplegada en GitHub Pages (`/FGLab-Webpage-Remake/`).
-- **Backend (`fastapi-crud/`):** API REST construida con FastAPI y SQLAlchemy Core, conectada a una base de datos PostgreSQL.
+- **Backend (`fastapi/`):** API REST construida con FastAPI y SQLAlchemy Core, conectada a una base de datos PostgreSQL.
 - **Orquestación (`k8s/`):** Manifiestos de Kubernetes diseñados para correr en un clúster local con **kind** (Kubernetes in Docker) y exponerse a internet mediante un túnel inverso HTTPS con **ngrok**.
 
 ---
@@ -37,7 +37,7 @@ Asegúrate de tener instaladas las siguientes herramientas en tu sistema:
 
 ```text
 FGLab-Webpage-Remake/
-├── fastapi-crud/          # Código fuente de la API FastAPI y Dockerfile
+├── fastapi/          # Código fuente de la API FastAPI y Dockerfile
 ├── k8s/                   # Manifiestos YAML de Kubernetes (Namespace, ConfigMap, Secrets, Deployments, Services)
 ├── react/                 # Código fuente del frontend (Vite + React)
 └── .github/workflows/     # Pipeline de CI/CD para despliegue automático en GitHub Pages
@@ -62,7 +62,7 @@ kubectl get nodes
 Como `kind` corre dentro de contenedores Docker aislados, no ve las imágenes locales de tu máquina automáticamente. Debes construir la imagen de FastAPI y cargarla explícitamente en el clúster:
 
 ```bash
-docker build -t fglab_fastapi:latest ./fastapi-crud
+docker build -t fglab_fastapi:latest ./fastapi
 kind load docker-image fglab_fastapi:latest --name fglab-cluster
 ```
 
@@ -85,6 +85,8 @@ kubectl get pods -n fglab
 #### 3.4. (Opcional) Restaurar datos iniciales en PostgreSQL
 Si cuentas con un respaldo SQL (por ejemplo `backup_labmem.sql`), puedes importarlo directamente al contenedor de PostgreSQL en Kubernetes y resincronizar las secuencias autoincrementales:
 
+> Para este ejemplo asumimos que el nombre de la base de datos es `fglab_db` y el usuario `postgres`, cambia estos valores por los valores de `DATABASE_NAME` y `DATABASE_USER` según corresponda.
+
 ```bash
 # Copiar e importar respaldo
 kubectl cp backup_labmem.sql fglab/$(kubectl get pod -n fglab -l app=postgres -o jsonpath='{.items[0].metadata.name}'):/tmp/backup.sql
@@ -100,18 +102,18 @@ SELECT setval(pg_get_serial_sequence('bbs_posts', 'id'), COALESCE(MAX(id), 1)) F
 
 ---
 
-### 4. Exponer la API con `port-forward` y Túnel Inverso (`ngrok`)
+### 4. Exponer la API con Túnel Inverso (`ngrok`)
 
-Para que un frontend alojado en internet (como GitHub Pages sobre HTTPS) pueda comunicarse con tu clúster local sin errores de *Mixed Content*, necesitas redirigir el tráfico desde el servicio de Kubernetes hacia tu host y publicarlo mediante HTTPS con **ngrok**.
+Dado que el clúster de `kind` mapea el puerto del servicio de FastAPI directamente al puerto `8000` del host local (`localhost:8000`) mediante la configuración del clúster y el `Service` de Kubernetes, no necesitas ejecutar `kubectl port-forward` manualmente. Solo debes exponer `localhost:8000` a internet con **ngrok** para obtener una URL pública HTTPS (evitando errores de *Mixed Content* desde GitHub Pages).
 
-#### 4.1. Redirigir el puerto del servicio FastAPI al host local
-En una terminal, abre un `port-forward` hacia el servicio de FastAPI dentro del namespace `fglab`:
+#### 4.1. Verificar que el servicio responde en local
+Antes de abrir el túnel, confirma que el contenedor de `kind` está enrutando el tráfico hacia tu máquina local:
 
 ```bash
-kubectl port-forward -n fglab svc/fastapi-service 8000:8000
+curl -I http://localhost:8000/docs
 ```
 
-Puedes comprobar que la API responde localmente entrando a `http://localhost:8000/docs`.
+Deberías recibir un `HTTP/1.1 200 OK`.
 
 #### 4.2. Abrir el túnel HTTPS con ngrok
 1. Si es la primera vez que usas ngrok en tu equipo, vincula tu token de autenticación:
@@ -129,7 +131,7 @@ ngrok http 8000
 3. Copia la URL pública HTTPS que te asigna ngrok (por ejemplo: `https://tu-subdominio.ngrok-free.dev`).
 
 > **Importante sobre CORS y cabeceras de ngrok:**
-> - En `fastapi-crud/`, `CORSMiddleware` debe incluir en `allow_origins` el dominio raíz desde donde se sirve el frontend (ej. `"https://skira2013.github.io"`, sin subrutas ni barra final).
+> - En `fastapi/`, `CORSMiddleware` debe incluir en `allow_origins` el dominio raíz desde donde se sirve el frontend (ej. `"https://skira2013.github.io"`, sin subrutas ni barra final).
 > - El frontend envía la cabecera `ngrok-skip-browser-warning: true` en sus peticiones `fetch` para saltar la pantalla intersticial gratuita de ngrok.
 
 ---
@@ -175,7 +177,7 @@ El repositorio incluye un workflow automatizado en `.github/workflows/deploy.yml
 | :--- | :--- |
 | Ver estado de pods y servicios | `kubectl get all -n fglab` |
 | Ver logs en tiempo real de FastAPI | `kubectl logs -f -n fglab deploy/fastapi` |
-| Actualizar backend tras cambios en código | `docker build -t fglab_fastapi:latest ./fastapi-crud && kind load docker-image fglab_fastapi:latest --name fglab-cluster && kubectl rollout restart deployment/fastapi -n fglab` |
+| Actualizar backend tras cambios en código | `docker build -t fglab_fastapi:latest ./fastapi && kind load docker-image fglab_fastapi:latest --name fglab-cluster && kubectl rollout restart deployment/fastapi -n fglab` |
 | Apagar el clúster sin borrarlo | `docker stop fglab-cluster-control-plane` |
 | Encender el clúster nuevamente | `docker start fglab-cluster-control-plane` |
 | Eliminar el clúster por completo | `kind delete cluster --name fglab-cluster` |
