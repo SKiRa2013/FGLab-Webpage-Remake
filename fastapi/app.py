@@ -26,7 +26,7 @@ api.include_router(bbs_posts)
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://skira2013.github.io/FGLab-Webpage-Remake",
+    "https://skira2013.github.io",
 ]
 
 api.add_middleware(
