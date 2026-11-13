@@ -7,7 +7,10 @@ import { DateConversion } from '../../DateConversion.jsx';
 
 export default function Bbs() {
 	const [posts, setPosts] = useState([]);
-	const BASE_URL = `${import.meta.env.VITE_API_URL}/bbs/posts` || 'http://localhost:8000/bbs/posts';
+
+	const rawApiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+	const API_URL = /^https?:\/\//.test(rawApiUrl) ? rawApiUrl : `https://${rawApiUrl}`;
+	const BASE_URL = `${API_URL}/bbs/posts`;
 
 	const fetchPosts = async () => {
 		try{
