@@ -6,12 +6,30 @@ import { EVENTS } from '../constants/events.jsx';
 import { Route } from './Route.jsx';
 import Page404 from './404.jsx';
 
+
+const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function getAppPath() {
+    let pathname = window.location.pathname;
+
+    if (BASENAME && pathname.startsWith(BASENAME)) {
+        pathname = pathname.slice(BASENAME.length);
+    }
+
+    // Normaliza barras finales ('/bbs/' -> '/bbs') pero mantiene '/' intacto
+    if (pathname.length > 1 && pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
+    }
+
+    return pathname || '/';
+}
+
 export function Router({ children, routes = [], defaultComponent: DefaultComponent = () => <Page404 /> }) {
-    const [currentPath, setCurrentPath] = useState(window.location.pathname);
+    const [currentPath, setCurrentPath] = useState(getAppPath);
 
     useEffect(() => {
         const onLocationChange = () => {
-        	setCurrentPath(window.location.pathname);
+        	setCurrentPath(getAppPath());
         };
 
         window.addEventListener(EVENTS.PUSHSTATE, onLocationChange);
@@ -19,7 +37,7 @@ export function Router({ children, routes = [], defaultComponent: DefaultCompone
 
         return () => {
         	window.removeEventListener(EVENTS.PUSHSTATE, onLocationChange);
-			window.addEventListener(EVENTS.POPSTATE, onLocationChange);
+			window.removeEventListener(EVENTS.POPSTATE, onLocationChange);
         };
     }, []);
 
